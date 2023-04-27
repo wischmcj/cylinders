@@ -32,8 +32,10 @@ def read_requirements(path):
 setup(
     name="cylinders",
     version=read("cylinders", "VERSION"),
-    description="Awesome cylinders created by wischmcj",
+    author='Travis Swanton, John Van Stan, and *Collin Wischmeyer ', 
+    description="Aplication indtended for use processing cyliders into graphs",
     url="https://github.com/wischmcj/cylinders/",
+    #url="https://github.com/travisswanson/projectCylinders",
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
     author="wischmcj",
