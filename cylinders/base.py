@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import logging
-from cylinders.settings import LOGDIR, GRAPHLOC
+from cylinders.settings import LOGDIR, GRAPHLOC, STEMLOC
 import os
 from pathlib import Path
 from time import sleep
@@ -45,6 +45,7 @@ class CylinderCollection:
         self.df = pd.DataFrame()
         self.total_union = None
         self.stempaths = np.nan
+        self.graph = np.nan
 
     #potential additional functions 
 
@@ -58,9 +59,17 @@ class CylinderCollection:
     def pickle_save(graph, name, path=GRAPHLOC):
         nx.write_gpickle(graph, open(path + name, 'wb'))
     
-    def pickle_load(fullpath):
-        gr = nx.read_gpickle(fullpath,'wb')
-        return gr
+    def load_stem_paths(self):  
+        self.stempaths = np.load(STEMLOC+self.filename+'.npy')
+
+    def load_graph(self):
+        gname =  str("".join([GRAPHLOC, self.filename.replace('.csv','.txt')]))
+        with open(gname, 'rb') as file :
+            self.graph = nx.read_gpickle(gname)
+    # def pickle_load(fullpath,test):
+    #     with open(fullpath, 'rb') as file :
+    #         gr = nx.read_gpickle(file)
+    #     return gr
  
     def read_csv(self):
         #Columns [ID?,ParentID?,x1,y1,z1,x2,y2,z2,radius,?,?,lenght,? ,? ,? ,? ,? ,? ,? ,BO]
@@ -199,7 +208,7 @@ class CylinderCollection:
     def compute_union(self):
         self.totalUnion = unary_union(self.pSV)
 
-    def compute_stem_paths(self):
+    def create_graph(self):
         # draft adjaceny matrix construction from prior matlab code
         R = {}
 
@@ -233,9 +242,12 @@ class CylinderCollection:
         edges = zip(rows.tolist(), cols.tolist())
         gr = nx.Graph()
         gr.add_edges_from(edges)
+        self.graph= gr
+        nx.write_gpickle(gr, open(GRAPHLOC + self.filename, 'wb'))
 
+    def compute_stem_paths(self):
+        gr = self.graph
         gnodes = [g for g in gr.nodes()]
-
         self.stempaths = np.zeros(len(gnodes))
 
         for idx,pn in enumerate(gnodes):
@@ -244,7 +256,7 @@ class CylinderCollection:
             tmp = nx.shortest_path(gr,pn,1)
 
             #replacing nested for loop with numpy function, intersect1d
-            _, _, sid_ind = np.intersect1d(tmp, sid, return_indices=True)
+            _, _, sid_ind = np.intersect1d(tmp, self.df[' ID'], return_indices=True)
         
             #calculating the distance represnted by each cyl
             diffs = np.sqrt(np.diff(self.x[1,sid_ind])**2+np.diff(self.y[1,sid_ind])**2+np.diff(self.z[1,sid_ind])**2)
@@ -252,11 +264,11 @@ class CylinderCollection:
             #cumlength = np.cumsum(diffs)
             self.stempaths[idx] = sum(diffs)
 
-        if np.random.uniform(0,1,1) <0.01:
-            print("Just completed {} stempath...".format(idx))
-
-        nx.write_gpickle(gr, open(GRAPHLOC + self.filename, 'wb'))
-
+            if np.random.uniform(0,1,1) <0.01:
+                print("Just completed {} stempath...".format(idx))
+            
+            np.save(STEMLOC+self.filename.replace('.csv','.txt'), self.stempaths)
+        
         """
         endnodes = [x for x in gr.nodes() if gr.degree(x)==1]
         pathLen = np.zeros(len(endnodes),dtype="int_")

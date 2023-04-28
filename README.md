@@ -11,11 +11,22 @@
   1. **:** contains sample files to allow for running of the program. 
   2. **Cyl Fitting Types:**  EXTRAPOLATETODTM, ALLOMETRICGROWTHVOLUME, SPHEREFOLLOWING, MEDIAN
 
+<h2>Commands:</h2>
 
+- Activate venv
+  - in Powershell
+  - cd C:\Users\wisch\Documents\GitProjects\cylinders_personal
+  - venv\scripts\activate.ps1 
+- Run the projects
+  - load graphs from last files 
+    - python -m cylinders load 
+  - create graphs from cyl data 
+    - python -m cylinders read
 
-<h3>Approach</h3>
+<h2>Approach</h2>
 
 - Pixel data from Lidar is read in to an object called cylinder
     - An array variable of said cylider (pSV) is the created that stores the projected vetors for each cylinder
     - The proejcted vecors (in conjunctuon with the parent-child relationships from the raw data) are then used to create an adjacency matrics 
     - The adjacency matrix is then converted into a graph with networkx
+    - This graph is then used to create an array? of stempaths for analysis 
