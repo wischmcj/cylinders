@@ -2,6 +2,8 @@ import geopandas as geo
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import logging
+from cylinders.settings import LOGDIR, GRAPHLOC
 import os
 from pathlib import Path
 from time import sleep
@@ -12,9 +14,13 @@ from shapely.ops import unary_union
 from descartes import PolygonPatch
 import networkx as nx
 from mpl_toolkits import mplot3d
-from . import graph as pg
+from pickle import dump, load
+
 
 NAME = "Cylinder"
+logging.basicConfig(filename=LOGDIR , filemode='w', level=logging.DEBUG)
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+log = logging.getLogger("my-logger")
 #suggested libraries 
 #import pytest as pt
 #import logging as log # replace writes to the console with various logging 
@@ -49,14 +55,19 @@ class CylinderCollection:
     #def
     #def
     #def
-
+    def pickle_save(graph, name, path=GRAPHLOC):
+        nx.write_gpickle(graph, open(path + name, 'wb'))
+    
+    def pickle_load(fullpath):
+        gr = nx.read_gpickle(fullpath,'wb')
+        return gr
+ 
     def read_csv(self):
         #Columns [ID?,ParentID?,x1,y1,z1,x2,y2,z2,radius,?,?,lenght,? ,? ,? ,? ,? ,? ,? ,BO]
         #Colnums [1  ,2        ,3 , 4, 5, 6, 7, 8,9    ,10,11,12   ,13,14,15,16,17,18,19,20]
         # x = x2-x1, y =y2-y1, z=z2-z1
-        #number of cylanders = cnt values for radius
+        #number of cyliders = cnt values for radius
         # Theta  = angle made buy the cylinder axis
-
         self.df = pd.read_csv(self.filename,header=0)    
         self.x = np.transpose(self.df.iloc[:,[3,6]].to_numpy())#columns 3 and 6 represent our x values
         self.y = np.transpose(self.df.iloc[:,[4,7]].to_numpy())#columns 4 and 7 the y values 
@@ -72,9 +83,11 @@ class CylinderCollection:
         self.dz = self.df.iloc[:,8].to_numpy() - self.df.iloc[:,5].to_numpy()
 
         self.theta = np.arctan(self.dz/np.sqrt(self.dx**2 + self.dy**2))
+        log.info(self.filename + " initialized")
 
     #its pro-ject not prah-ject
     def project_cylinders(self):
+        log.info(self.filename + " cylinder projection begun")
         noCirPoints = 360
 
         tCir = np.linspace(0,2*np.pi,noCirPoints) #360 evenly spaced points between 0 - 2pi (radian degrees)
@@ -180,6 +193,7 @@ class CylinderCollection:
 
                 #print a progress update once every 10 thousand or so cylinders
                 if np.random.uniform(0,1,1) < 0.0001:
+                    log.info(self.filename + ': completed {} \n'.format(np.round((idx/self.noCylinders)*100,decimals=1)))
                     print('completed {} \n'.format(np.round((idx/self.noCylinders)*100,decimals=1)))
     
     def compute_union(self):
@@ -241,7 +255,7 @@ class CylinderCollection:
         if np.random.uniform(0,1,1) <0.01:
             print("Just completed {} stempath...".format(idx))
 
-        pg.pickle_save(gr, 'most_recent_graph.txt') 
+        nx.write_gpickle(gr, open(GRAPHLOC + self.filename, 'wb'))
 
         """
         endnodes = [x for x in gr.nodes() if gr.degree(x)==1]
