@@ -36,10 +36,16 @@ def main():
 
     if args.int_auto == 'i':
         #Code for workin g with previously created objects here 
-        print('interactive mode launched')
-        c = cylinder.CylinderCollection('Secrest07-32_000000.csv')
-        c.load_graph()
-        print(len(c.graph.nodes()))
+        noCirPoints = 360
+
+        tCir = np.linspace(0,2*np.pi,noCirPoints) #360 evenly spaced points between 0 - 2pi (radian degrees)
+        print(tCir)
+        XOrtho = np.cos(tCir)
+        print('orth' + XOrtho)
+        # print('interactive mode launched')
+        # c = cylinder.CylinderCollection('Secrest07-32_000000.csv')
+        # c.load_graph()
+        # print(len(c.graph.nodes()))
         
     if args.int_auto == 'a':
         stemlengths = {}
@@ -58,37 +64,42 @@ def main():
             if args.read_load == 'read':
                 c.read_csv()
                 c.create_graph()
+                print('GraphCreated')
 
-            c.compute_stem_paths()
-            stemlengths[f] = c.stempaths
+            c.project_cylinders
+            c.draw_polys
+            print('PlotCreated')
+            # c.compute_stem_paths()
+            # print('PathsComputed')
+            # stemlengths[f] = c.stempaths
                 
-            savStemlengths = stemlengths
+            # savStemlengths = stemlengths
 
-            for s in stemlengths:
-                tmp = stemlengths[s].flatten()
-                stemlengths[s] = tmp[~np.isnan(tmp)]
-
-                
-            stemlength_df = pd.DataFrame()
-            for s in stemlengths:
-                tmp = pd.DataFrame(stemlengths[s], columns = [s])
-                stemlength_df = pd.concat([stemlength_df,tmp], ignore_index=True, axis=1)
+            # for s in stemlengths:
+            #     tmp = stemlengths[s].flatten()
+            #     stemlengths[s] = tmp[~np.isnan(tmp)]
 
                 
-            stemlength_df.columns = list(stemlengths.keys()) 
+            # stemlength_df = pd.DataFrame()
+            # for s in stemlengths:
+            #     tmp = pd.DataFrame(stemlengths[s], columns = [s])
+            #     stemlength_df = pd.concat([stemlength_df,tmp], ignore_index=True, axis=1)
 
-            hist = stemlength_df.hist(bins=100)
                 
-            stemlength_df.mean(axis=0)
+            # stemlength_df.columns = list(stemlengths.keys()) 
 
-            stemlength_df.std(axis=0)
-
-            stemlength_df.columns = list(stemlengths.keys()) 
+            # hist = stemlength_df.hist(bins=100)
                 
-            stemlength_df.head()
+            # stemlength_df.mean(axis=0)
 
-            stemlength_df.to_csv(STEMLOC + '.csv')
+            # stemlength_df.std(axis=0)
 
-            print("test")
+            # stemlength_df.columns = list(stemlengths.keys()) 
+                
+            # stemlength_df.head()
+
+            # stemlength_df.to_csv(STEMLOC + '.csv')
+
+            # print("test")
 
 

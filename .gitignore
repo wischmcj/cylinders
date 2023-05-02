@@ -130,3 +130,18 @@ dmypy.json
 
 # templates
 .github/templates/*
+
+#data
+.csv
+.jpg
+.png
+/output
+/input
+
+#logs
+log*
+*.csv
+*.jpg
+*.svg
+*.png
+cylinders/1log_6log_8log_2log_7log_9log_2log_8log_0log_2
