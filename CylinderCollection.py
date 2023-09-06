@@ -87,7 +87,7 @@ class CylinderCollection:
                     }]
         self.drip_points = {'x':np.nan, 'y':np.nan, 'z':np.nan, 'flow_id':np.nan}
         self.flow_to_drip = {0:1} # A dictionary of flow ids with values equal to their drip node ids 
-        self.trunkNodes = []
+        self.trunk_nodes = []
         self.drip_loc = np.nan
 
         #Calculations using graph results
@@ -96,7 +96,7 @@ class CylinderCollection:
                                 {'cyls' : 0, 'len' : 0, 'sa' : 0, 'pa' : 0, 'as' : 0},
                             'loc': {'x':np.nan, 'y':np.nan, 'z':np.nan}
                         }
-        self.divide_ = []
+        self.divide_points = []
         self.stemPolys = []
         self.compGraphs = []
 
