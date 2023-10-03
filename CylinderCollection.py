@@ -129,7 +129,114 @@ class CylinderCollection:
                 toWrite = toWrite.append(exist)
                 with pd.ExcelWriter(dir + aggname, engine = 'openpyxl',mode='w') as writer:
                     toWrite.to_excel(writer, index = False, sheet_name =method)  
-        
+    def read_csv(self,df = pd.DataFrame(), polys = [],projection='XY'):
+        #Columns [ID?,ParentID?,x1,y1,z1,x2,y2,z2,radius,?,?,lenght,? ,? ,? ,? ,? ,? ,? ,BO]
+        #Colnums [1  ,2        ,3 , 4, 5, 6, 7, 8,9    ,10,11,12   ,13,14,15,16,17,18,19,20]
+        # x = x2-x1, y =y2-y1, z=z2-z1
+        #number of cyliders = cnt values for radius
+        # Theta  = angle made buy the cylinder axis
+        self.projection =projection 
+        if('partial' not in self.filename):
+            self.df_full = pd.read_csv(self.filename,header=0)
+        else: 
+            self.df_full = df
+        self.maxBO = np.max(self.BO)
+        #self.df = self.df_full 
+        self.df=self.df_full#.iloc[:130,:]
+        #columns 3 and 6 represent our x values
+        if projection == 'XZ':
+            self.x = np.transpose(self.df.iloc[:,[3,6]].to_numpy())
+            self.y = np.transpose(self.df.iloc[:,[5,8]].to_numpy())
+            self.z = np.transpose(self.df.iloc[:,[4,7]].to_numpy())
+        elif projection == 'YZ':
+            self.x = np.transpose(self.df.iloc[:,[5,8]].to_numpy())
+            self.y = np.transpose(self.df.iloc[:,[3,6]].to_numpy())
+            self.z = np.transpose(self.df.iloc[:,[4,7]].to_numpy())     
+        else: # 'XY'
+            self.x = np.transpose(self.df.iloc[:,[3,6]].to_numpy())   
+            self.y = np.transpose(self.df.iloc[:,[4,7]].to_numpy()) 
+            self.z = np.transpose(self.df.iloc[:,[5,8]].to_numpy()) 
+        # for side view
+        self.cylID = self.df.iloc[:,1].to_numpy()
+        self.pID =self.df.iloc[:,2].to_numpy()
+        self.radius = self.df.iloc[:,9].to_numpy()
+        self.noCylinders = self.radius.size
+        self.cLength = self.df.iloc[:,12].to_numpy()
+        self.BO = self.df.iloc[:,20].to_numpy()
+        self.branchID = self.df.iloc[:,4].to_numpy()
+        self.maxBO = np.max(self.BO)
+        self.bID = self.df.iloc[:,24].to_numpy()
+        if projection == 'XZ':
+            self.dx = self.df.iloc[:,6].to_numpy() - self.df.iloc[:,3].to_numpy()
+            self.dy = self.df.iloc[:,8].to_numpy() - self.df.iloc[:,5].to_numpy()
+            self.dz = self.df.iloc[:,7].to_numpy() - self.df.iloc[:,4].to_numpy()
+        elif projection == 'YZ':
+            self.dx = self.df.iloc[:,8].to_numpy() - self.df.iloc[:,5].to_numpy()
+            self.dy = self.df.iloc[:,6].to_numpy() - self.df.iloc[:,3].to_numpy()
+            self.dz = self.df.iloc[:,7].to_numpy() - self.df.iloc[:,4].to_numpy()    
+        else: # 'XY'
+            self.dx = self.df.iloc[:,6].to_numpy() - self.df.iloc[:,3].to_numpy()  
+            self.dy = self.df.iloc[:,7].to_numpy() - self.df.iloc[:,4].to_numpy()
+            self.dz = self.df.iloc[:,8].to_numpy() - self.df.iloc[:,5].to_numpy() 
+        if('partial' in self.filename): self.pSV = polys
+        self.theta = np.arctan(self.dz/np.sqrt(self.dx**2 + self.dy**2))
+        self.output_dir = ''.join([DIR,'output/'])
+        log.info(self.filename + " initialized")
+
+    def read_csv(self,df = pd.DataFrame(), polys = [],projection='XY'):
+        #Columns [ID?,ParentID?,x1,y1,z1,x2,y2,z2,radius,?,?,lenght,? ,? ,? ,? ,? ,? ,? ,BO]
+        #Colnums [1  ,2        ,3 , 4, 5, 6, 7, 8,9    ,10,11,12   ,13,14,15,16,17,18,19,20]
+        # x = x2-x1, y =y2-y1, z=z2-z1
+        #number of cyliders = cnt values for radius
+        # Theta  = angle made buy the cylinder axis
+        self.projection =projection 
+        if('partial' not in self.filename):
+            self.df_full = pd.read_csv(self.filename,header=0)
+        else: 
+            self.df_full = df
+        self.maxBO = np.max(self.BO)
+        #self.df = self.df_full 
+        self.df=self.df_full#.iloc[:130,:]
+        #columns 3 and 6 represent our x values
+        if projection == 'XZ':
+            self.x = np.transpose(self.df.iloc[:,[3,6]].to_numpy())
+            self.y = np.transpose(self.df.iloc[:,[5,8]].to_numpy())
+            self.z = np.transpose(self.df.iloc[:,[4,7]].to_numpy())
+        elif projection == 'YZ':
+            self.x = np.transpose(self.df.iloc[:,[5,8]].to_numpy())
+            self.y = np.transpose(self.df.iloc[:,[3,6]].to_numpy())
+            self.z = np.transpose(self.df.iloc[:,[4,7]].to_numpy())     
+        else: # 'XY'
+            self.x = np.transpose(self.df.iloc[:,[3,6]].to_numpy())   
+            self.y = np.transpose(self.df.iloc[:,[4,7]].to_numpy()) 
+            self.z = np.transpose(self.df.iloc[:,[5,8]].to_numpy()) 
+        # for side view
+        self.cylID = self.df.iloc[:,1].to_numpy()
+        self.pID =self.df.iloc[:,2].to_numpy()
+        self.radius = self.df.iloc[:,9].to_numpy()
+        self.noCylinders = self.radius.size
+        self.cLength = self.df.iloc[:,12].to_numpy()
+        self.BO = self.df.iloc[:,20].to_numpy()
+        self.branchID = self.df.iloc[:,4].to_numpy()
+        self.maxBO = np.max(self.BO)
+        self.bID = self.df.iloc[:,24].to_numpy()
+        if projection == 'XZ':
+            self.dx = self.df.iloc[:,6].to_numpy() - self.df.iloc[:,3].to_numpy()
+            self.dy = self.df.iloc[:,8].to_numpy() - self.df.iloc[:,5].to_numpy()
+            self.dz = self.df.iloc[:,7].to_numpy() - self.df.iloc[:,4].to_numpy()
+        elif projection == 'YZ':
+            self.dx = self.df.iloc[:,8].to_numpy() - self.df.iloc[:,5].to_numpy()
+            self.dy = self.df.iloc[:,6].to_numpy() - self.df.iloc[:,3].to_numpy()
+            self.dz = self.df.iloc[:,7].to_numpy() - self.df.iloc[:,4].to_numpy()    
+        else: # 'XY'
+            self.dx = self.df.iloc[:,6].to_numpy() - self.df.iloc[:,3].to_numpy()  
+            self.dy = self.df.iloc[:,7].to_numpy() - self.df.iloc[:,4].to_numpy()
+            self.dz = self.df.iloc[:,8].to_numpy() - self.df.iloc[:,5].to_numpy() 
+        if('partial' in self.filename): self.pSV = polys
+        self.theta = np.arctan(self.dz/np.sqrt(self.dx**2 + self.dy**2))
+        self.output_dir = ''.join([DIR,'output/'])
+        log.info(self.filename + " initialized")
+
     def find_flows():
         #Replace trunk with single node 
 
