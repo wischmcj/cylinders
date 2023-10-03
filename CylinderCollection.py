@@ -237,7 +237,7 @@ class CylinderCollection:
         self.output_dir = ''.join([DIR,'output/'])
         log.info(self.filename + " initialized")
 
-    def find_flows():
+     def find_flows():
         #Replace trunk with single node 
 
         #Remove edges with out flow 
@@ -246,4 +246,6 @@ class CylinderCollection:
         #Remove all stem flow from orig graph, these are drip paths
             #Find node of minimal height in each component, this is the drip point 
     
-    def 
+    def network_simplex():
+        #can be used to calculate flows on graphs with demands 
+        #we could set a demand of generates X volume of flow 

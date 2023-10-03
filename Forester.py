@@ -43,15 +43,7 @@ class Forester:
     def __init__(self, filename) -> None:
         self.variable = v
         
-    def find_flows():
-        #Replace trunk with single node 
-
-        #Remove edges with out flow 
-        #Find the connected component with root in it, this is stem flow 
-
-        #Remove all stem flow from orig graph, these are drip paths
-            #Find node of minimal height in each component, this is the drip point 
-    
+   
     def network_simplex():
         #can be used to calculate flows on graphs with demands 
         #we could set a demand of generates X volume of flow 

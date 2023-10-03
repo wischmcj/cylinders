@@ -42,17 +42,17 @@ class CylinderCollection:
     def __init__(self, CylinderCollection) -> None:
         #Base Attributes from file read in
         # self.cylinderCollection = CylinderCollection
-        self.x = np.nan #len 2 array
-        self.y = np.nan #len 2 array
-        self.z = np.nan #len 2 array
-        self.radius = np.nan
-        self.length = np.nan
-        self.branch_order = np.nan
-        self.branch_id = np.nan
-        self.volume = np.nan
-        self.parent_id = np.nan
-        self.rev_branch_order = np.nan
-        self.section_id = np.nan
+        self.x                  = np.nan #len 2 array
+        self.y                  = np.nan #len 2 array
+        self.z                  = np.nan #len 2 array
+        self.radius             = np.nan
+        self.length             = np.nan
+        self.branch_order       = np.nan
+        self.branch_id          = np.nan
+        self.volume             = np.nan
+        self.parent_id          = np.nan
+        self.rev_branch_order   = np.nan
+        self.section_id         = np.nan
         
         #Calculated based off of projection
         self.projected_data= {
@@ -70,8 +70,8 @@ class CylinderCollection:
         self.graph = nx.Graph()
         self.flow_id = np.nan
         self.flow_type = np.nan
-        self.begins_at_drip_point = np.nan
-        self.begins_at_divide_point  = np.nan
+        self.begins_at_drip_point = np.nan #bool
+        self.begins_at_divide_point  = np.nan #bool
 
         #others
         self.stem_path_id = np.nan
