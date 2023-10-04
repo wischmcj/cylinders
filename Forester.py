@@ -25,7 +25,7 @@ import logging
 import settings
 import os
 
-import global_vars
+import global_vars as vars
 
 
 from pandas import to_excel as pd
@@ -36,13 +36,26 @@ NAME = "Cylinder"
 logging.basicConfig(filename=''.join(['log_',str(time_stamp)])  , filemode='w', level=logging.DEBUG, encoding='utf-8',level=os.environ.get("LOGLEVEL", "INFO"))
 log = logging.getLogger("my-logger")
  
-#Class intented to be the workhorse that manages cylinders and the like 
+#Class intented to be the workhorse that manages our objects
 class Forester:
+    #   Read in file names and create cylinder collection via CC class
+    # 
+    #   Read in file, mostly an array of cylinders 
+    #   
+    #   Create graph
+    #       
 
     #initialize our object level variables for cylider objects 
     def __init__(self, filename) -> None:
         self.variable = v
-        
+    
+    def get_file_names():
+        os.chdir(''.join([vars.DIR,'input']))
+        fullPath = Path(''.join([vars.DIR,'input']))
+        paths = sorted(fullPath.iterdir(),key=os.path.getmtime)
+        fileNames = [f.name for f in paths if  f.suffix == '.csv' ]
+        print(fileNames)
+        return fileNames
    
     def network_simplex():
         #can be used to calculate flows on graphs with demands 

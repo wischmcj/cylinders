@@ -37,6 +37,12 @@ logging.basicConfig(filename=''.join(['log_',str(time_stamp)])  , filemode='w', 
 log = logging.getLogger("my-logger")
  
 class CylinderCollection:
+    # A cylinder collection is just an array of cylinder objects 
+    #  with some of its own variables 
+    # Its purpose is to act as a storage for entire trees as well as 
+    # sub trees. This might include the stem flow, drip flow
+    # 
+    #  
 
     #initialize our object level variables for cylider objects 
     def __init__(self, CylinderCollection) -> None:
@@ -67,11 +73,11 @@ class CylinderCollection:
         }
 
         #graph attributes, all in 3-D
-        self.graph = nx.Graph()
-        self.flow_id = np.nan
-        self.flow_type = np.nan
-        self.begins_at_drip_point = np.nan #bool
-        self.begins_at_divide_point  = np.nan #bool
+        self.graph                  = nx.Graph()
+        self.flow_id                = np.nan
+        self.flow_type              = np.nan
+        self.begins_at_drip_point   = np.nan #bool
+        self.begins_at_divide_point = np.nan #bool
 
         #others
         self.stem_path_id = np.nan
